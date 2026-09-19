@@ -5,6 +5,8 @@
 
 extern vex::brain Brain;
 extern vex::controller Controller;
-extern vex::motor motor1;
+extern vex::motor leftMotor;
+extern vex::motor rightMotor;
+extern vex::motor clawRaiser;
 
 #endif

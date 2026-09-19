@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Ben B& Felix H                                                     */
+/*    Author:       Ben B& Felix H                                            */
 /*    Created:      9/15/2026, 4:18:50 PM                                     */
 /*    Description:  V5 project                                                */
 /*                                                                            */
@@ -10,6 +10,8 @@
 #include "vex.h"
 #include "utils/helperMethods.h"
 #include <string>
+#include <cmath>
+#include <algorithm>
 
 using namespace vex;
 using namespace std;
@@ -18,7 +20,9 @@ competition Competition;
 
 brain Brain;
 controller Controller = controller(primary);
-motor motor1 = motor(PORT1);
+motor leftMotor = motor(PORT6);
+motor rightMotor = motor(PORT16);
+motor clawRaiser = motor(PORT1);
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -34,7 +38,7 @@ void pre_auton(void) {
   Brain.Screen.clearScreen();
   Brain.Screen.setCursor(1, 1);
 
-  resetAllMotors();
+  resetAllMotors(); 
   setSpeed(100);
 
   printLineToScreen("hello world");
@@ -66,24 +70,58 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) {  
-  Controller.ButtonUp.pressed([] {
-    setSpeed(getSpeed() + 10);
-  });
+void usercontrol(void) {
+    if (Controller.ButtonL1.pressing()){
+      raiseClaw();
+    }
 
-  Controller.ButtonDown.pressed([] {
-    setSpeed(getSpeed() - 10);
-  });
+    if (Controller.ButtonL2.pressing()){
+      lowerClaw();
+    }
 
-  Controller.ButtonA.pressed([] {
-    toggleMotor1();
-  });
+    while (true) {
+        drawScreen();
 
-  Controller.ButtonLeft.pressed(drawScreen);
-  
-  while (1) {
-    wait(20, msec);
-  }
+        int speed = static_cast<int>(
+            (Controller.Axis3.value() / 127.0) * 100
+        );
+
+        int targetAngle = getJoystickAngle();
+
+        if (targetAngle != 0) {
+
+            double currentAngle = getCurrentAngle();
+
+            double error = targetAngle - currentAngle;
+
+            if (error > 180)
+                error -= 360;
+
+            if (error < -180)
+                error += 360;
+
+            int turn = static_cast<int>(error * 0.5);
+
+            int leftSpeed = speed - turn;
+            int rightSpeed = speed + turn;
+
+            if (leftSpeed > 100) leftSpeed = 100;
+            if (leftSpeed < -100) leftSpeed = -100;
+
+            if (rightSpeed > 100) rightSpeed = 100;
+            if (rightSpeed < -100) rightSpeed = -100;
+
+            setLeftMotorSpeed(leftSpeed);
+            setRightMotorSpeed(rightSpeed);
+        }
+        else {
+
+            setLeftMotorSpeed(speed);
+            setRightMotorSpeed(speed);
+        }
+
+        wait(20, msec);
+    }
 }
 
 int main() {
@@ -93,6 +131,7 @@ int main() {
   pre_auton();
   
   while (true) {
+    
     wait(100, msec);
   }
 }

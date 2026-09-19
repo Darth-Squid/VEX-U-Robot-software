@@ -7,10 +7,18 @@
 void printToScreen(std::string message);
 void printLineToScreen(std::string message);
 
-void toggleMotor1();
+void setLeftMotorSpeed(int speedPercentage);
+void setRightMotorSpeed(int speedPercentage);
+
 void resetAllMotors();
 void setSpeed(int speed);
 int getSpeed();
 void drawScreen();
 
+int getJoystickAngle();
+int getCurrentAngle();
+void updateCurrentAngle();
+
+void raiseClaw();
+void lowerClaw();
 #endif
