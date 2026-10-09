@@ -21,4 +21,8 @@ void updateCurrentAngle();
 
 void raiseClaw();
 void lowerClaw();
+
+void leftSide(int rpm);
+void rightSide(int rpm);
+
 #endif

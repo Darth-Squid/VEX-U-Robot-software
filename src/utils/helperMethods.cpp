@@ -166,3 +166,31 @@ void lowerClaw(){
 
     clawRaiser.spin(vex::reverse);
 }
+
+void leftSide(int rpm) {
+    if (rpm == 0) {
+        leftMotor.stop();
+        return;
+    }
+
+    leftMotor.setVelocity(std::abs(rpm), vex::rpm);
+
+    if (rpm > 0)
+        leftMotor.spin(vex::forward);
+    else
+        leftMotor.spin(vex::reverse);
+}
+
+void rightSide(int rpm) {
+    if (rpm == 0) {
+        rightMotor.stop();
+        return;
+    }
+
+    rightMotor.setVelocity(std::abs(rpm), vex::rpm);
+
+    if (rpm > 0)
+        rightMotor.spin(vex::forward);
+    else
+        rightMotor.spin(vex::reverse);
+}

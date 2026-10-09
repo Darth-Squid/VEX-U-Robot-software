@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Ben B& Felix H                                            */
+/*    Author:       Ben B & Felix H                                           */
 /*    Created:      9/15/2026, 4:18:50 PM                                     */
 /*    Description:  V5 project                                                */
 /*                                                                            */
@@ -21,7 +21,7 @@ competition Competition;
 brain Brain;
 controller Controller = controller(primary);
 motor leftMotor = motor(PORT6);
-motor rightMotor = motor(PORT16);
+motor rightMotor = motor(PORT5);
 motor clawRaiser = motor(PORT1);
 
 /*---------------------------------------------------------------------------*/
@@ -82,43 +82,8 @@ void usercontrol(void) {
     while (true) {
         drawScreen();
 
-        int speed = static_cast<int>(
-            (Controller.Axis3.value() / 127.0) * 100
-        );
-
-        int targetAngle = getJoystickAngle();
-
-        if (targetAngle != 0) {
-
-            double currentAngle = getCurrentAngle();
-
-            double error = targetAngle - currentAngle;
-
-            if (error > 180)
-                error -= 360;
-
-            if (error < -180)
-                error += 360;
-
-            int turn = static_cast<int>(error * 0.5);
-
-            int leftSpeed = speed - turn;
-            int rightSpeed = speed + turn;
-
-            if (leftSpeed > 100) leftSpeed = 100;
-            if (leftSpeed < -100) leftSpeed = -100;
-
-            if (rightSpeed > 100) rightSpeed = 100;
-            if (rightSpeed < -100) rightSpeed = -100;
-
-            setLeftMotorSpeed(leftSpeed);
-            setRightMotorSpeed(rightSpeed);
-        }
-        else {
-
-            setLeftMotorSpeed(speed);
-            setRightMotorSpeed(speed);
-        }
+        leftSide(-600 * (Controller.Axis2.position()/100)); 
+        rightSide(600 * (Controller.Axis3.position()/100)); 
 
         wait(20, msec);
     }
